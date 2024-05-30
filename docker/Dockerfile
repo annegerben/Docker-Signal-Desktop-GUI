@@ -1,6 +1,13 @@
 ARG IMAGE_TAG="debian-11"
 ARG APP_ICON="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Signal_ultramarine_icon.svg/600px-Signal_ultramarine_icon.svg.png"
-#ARG APP_ICON="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Signal-Logo.svg/768px-Signal-Logo.svg.png"
+
+# Build the membarrier check tool.
+FROM alpine:3.14 AS membarrier
+WORKDIR /tmp
+COPY membarrier_check.c .
+RUN apk --no-cache add build-base linux-headers
+RUN gcc -static -o membarrier_check membarrier_check.c
+RUN strip membarrier_check
 
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
