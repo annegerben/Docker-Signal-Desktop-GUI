@@ -32,7 +32,7 @@ jobs:
         run: "echo dev > /tmp/docker_tag_version.txt"
       - name: Docker image tag version (on develop alpine push) to file
         if: github.ref == 'refs/heads/develop'
-        run: "echo dev > /tmp/docker_tag_version.txt"  
+        run: "echo alpine > /tmp/docker_tag_version.txt"  
       - name: Docker image tag version (on workflow dispatch) to file
         if: github.event.inputs.tag_version
         run: "echo ${{ github.event.inputs.tag_version }} > /tmp/docker_tag_version.txt"
