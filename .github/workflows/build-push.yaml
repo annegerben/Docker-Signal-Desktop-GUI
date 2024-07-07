@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - alpine
 
   workflow_dispatch:
     inputs:
@@ -29,6 +30,9 @@ jobs:
       - name: Docker image tag version (on develop branch push) to file
         if: github.ref == 'refs/heads/develop'
         run: "echo dev > /tmp/docker_tag_version.txt"
+      - name: Docker image tag version (on alpine branch push) to file
+        if: github.ref == 'refs/heads/alpine'
+        run: "echo alpine > /tmp/docker_tag_version.txt"
       - name: Docker image tag version (on workflow dispatch) to file
         if: github.event.inputs.tag_version
         run: "echo ${{ github.event.inputs.tag_version }} > /tmp/docker_tag_version.txt"
