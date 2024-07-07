@@ -1,8 +1,8 @@
-ARG IMAGE_TAG="debian-11"
+ARG IMAGE_TAG="alpine-3.20"
 ARG APP_ICON="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Signal_ultramarine_icon.svg/600px-Signal_ultramarine_icon.svg.png"
 
 # Build the membarrier check tool.
-FROM alpine:3.14 AS membarrier
+FROM alpine:3.20 AS membarrier
 WORKDIR /tmp
 COPY membarrier_check.c .
 RUN apk --no-cache add build-base linux-headers
