@@ -1,6 +1,6 @@
 # Signal Desktop app - Docker image
 
-Docker image for the Signal messaging desktop app, using the [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui) image (debian-10).
+Docker image for the Signal messaging desktop app, using the [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui) image (debian-11).
 Once deployed, the app can be accessed through a modern web browser or a VNC client.
 This image is only available for **linux/amd64**.
 
