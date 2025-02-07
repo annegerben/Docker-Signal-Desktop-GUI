@@ -24,10 +24,7 @@ RUN \
 RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox
 
 # Set application icon
-ARG APP_ICON
-RUN \
-    APP_ICON_URL=https://github.com/jlesage/docker-templates/raw/master/jlesage/images/generic-app-icon.png && \
-    install_app_icon.sh "${APP_ICON}"
+RUN install_app_icon.sh "${APP_ICON}"
 
 # Entrypoint script
 COPY ./startapp.sh /startapp.sh
