@@ -57,7 +57,7 @@ jobs:
         if: success()
         id: set_image_tag
         run: |-
-          echo ::set-output name=TAG::$(echo "davidlor/signal-desktop-gui:${{ steps.get_docker_tag_version_from_file.outputs.content }}")
+          echo ::set-output name=TAG::$(echo "annegerben/signal-desktop-gui:${{ steps.get_docker_tag_version_from_file.outputs.content }}")
       - name: Docker cache
         uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
