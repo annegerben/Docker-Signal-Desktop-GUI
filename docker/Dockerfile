@@ -21,10 +21,10 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 # Post-requirements for Signal
-#RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox
+RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox
 
 # Set application icon
-RUN install_app_icon.sh "${APP_ICON}"
+#RUN install_app_icon.sh "${APP_ICON}"
 
 # Entrypoint script
 COPY ./startapp.sh /startapp.sh
