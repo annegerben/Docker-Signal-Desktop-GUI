@@ -1,4 +1,4 @@
-ARG IMAGE_TAG="debian-12"
+ARG IMAGE_TAG="debian-12-v4"
 ARG APP_ICON="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Signal_ultramarine_icon.svg/600px-Signal_ultramarine_icon.svg.png"
 #ARG APP_ICON="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Signal-Logo.svg/768px-Signal-Logo.svg.png"
 
