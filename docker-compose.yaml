@@ -1,0 +1,13 @@
+services:
+  signal-desktop-gui:
+    image: annegerben/signal-desktop-gui:dev
+    container_name: signal-desktop
+    volumes:
+      - /data/signal:/config
+    ports:
+      - 5800:5800
+    environment:
+      - TZ=Europe/Amsterdam
+      - DARK_MODE=1
+    restart: unless-stopped
+
