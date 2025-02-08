@@ -26,8 +26,11 @@ RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-
 # Set application icon
 #RUN install_app_icon.sh "${APP_ICON}"
 
-# Entrypoint script
-#COPY ./startapp.sh /startapp.sh
-
 # Volumes definition
 VOLUME ["/config"]
+
+# Entrypoint script
+COPY ./startapp.sh /startapp.sh
+
+# Set the name of the application.
+RUN set-cont-env APP_NAME "Signal Messenger"
