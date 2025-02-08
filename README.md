@@ -15,6 +15,8 @@ docker volume create --name=signal-desktop-data
 docker run -d --name=signal-desktop -p 5800:5800 -v signal-desktop-data:/config -v /etc/localtime:/etc/localtime:ro annegerben/signal-desktop-gui:latest
 ```
 
+or use docker-compose.yaml
+
 ## Configuration
 
 - Volumes:
