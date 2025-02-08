@@ -18,7 +18,7 @@ jobs:
     steps:
       # Setup
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
@@ -34,20 +34,20 @@ jobs:
         run: "echo ${{ github.event.inputs.tag_version }} > /tmp/docker_tag_version.txt"
       - name: Read extracted image tag version from file
         id: get_docker_tag_version_from_file
-        uses: juliangruber/read-file-action@v1
+        uses: juliangruber/read-file-action@v2
         with:
           path: "/tmp/docker_tag_version.txt"
       - name: Set image tag version to variable
         id: get_image_tag_version
-        run: echo ::set-output name=VERSION::$(echo ${{ steps.get_docker_tag_version_from_file.outputs.content }})
+        run: echo "VERSION=$(cat /tmp/docker_tag_version.txt)" >> $GITHUB_ENV
       - name: Validate image tag version
         id: validate_image_tag_version
-        run: "test ${{ steps.get_image_tag_version.outputs.VERSION }} || exit 1"
+        run: "test ${{ env.VERSION }} || exit 1"
 
       # Docker login
       - name: Login to DockerHub
         if: success()
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
@@ -57,13 +57,13 @@ jobs:
         if: success()
         id: set_image_tag
         run: |-
-          echo ::set-output name=TAG::$(echo "annegerben/signal-desktop-gui:${{ steps.get_docker_tag_version_from_file.outputs.content }}")
+          echo "TAG=annegerben/signal-desktop-gui:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Docker cache
         uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Build
         if: success()
-        run: make build IMAGE_TAG=${{ steps.set_image_tag.outputs.TAG }}
+        run: make build IMAGE_TAG=${{ env.TAG }}
       - name: Push
         if: success()
-        run: docker push ${{ steps.set_image_tag.outputs.TAG }}
+        run: docker push ${{ env.TAG }}
