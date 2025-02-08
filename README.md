@@ -1,6 +1,6 @@
 # Signal Desktop app - Docker image
 
-Docker image for the Signal messaging desktop app, using the [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui) image (debian-10).
+Docker image for the Signal messaging desktop app, using the [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui) image (debian-12).
 Once deployed, the app can be accessed through a modern web browser or a VNC client.
 This image is only available for **linux/amd64**.
 
@@ -12,7 +12,7 @@ _This image is not official and is not associated with the Signal Foundation._
 
 ```bash
 docker volume create --name=signal-desktop-data
-docker run -d --name=signal-desktop -p 5800:5800 -v signal-desktop-data:/config -v /etc/localtime:/etc/localtime:ro davidlor/signal-desktop-gui:latest
+docker run -d --name=signal-desktop -p 5800:5800 -v signal-desktop-data:/config -v /etc/localtime:/etc/localtime:ro annegerben/signal-desktop-gui:latest
 ```
 
 ## Configuration
@@ -44,5 +44,7 @@ The available build args are:
 
 ## Changelog
 
+- 2025.02.08
+  - updated to debian 12
 - 0.0.1
   - Initial version: functional app
