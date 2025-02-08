@@ -27,7 +27,7 @@ RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-
 #RUN install_app_icon.sh "${APP_ICON}"
 
 # Entrypoint script
-COPY ./startapp.sh /startapp.sh
+#COPY ./startapp.sh /startapp.sh
 
 # Volumes definition
 VOLUME ["/config"]
