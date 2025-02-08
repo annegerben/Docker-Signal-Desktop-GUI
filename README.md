@@ -50,3 +50,6 @@ The available build args are:
   - updated to debian 12
 - 0.0.1
   - Initial version: functional app
+ 
+## Credits
+Original creator is https://github.com/David-Lor/Docker-Signal-Desktop-GUI
