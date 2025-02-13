@@ -45,11 +45,13 @@ The available build args are:
 - `IMAGE_TAG`: variant of the base image (other variants have not been tested)
 
 ## Changelog
-
 - 2025.02.08
   - updated to debian 12
 - 0.0.1
   - Initial version: functional app
- 
+
+## Signal version
+- Release v7.42.0
+  
 ## Credits
 Original creator is https://github.com/David-Lor/Docker-Signal-Desktop-GUI
