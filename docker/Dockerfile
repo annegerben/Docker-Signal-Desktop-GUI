@@ -1,6 +1,9 @@
 ARG IMAGE_TAG="debian-12-v4"
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
+ENV APP_VERSION="v7.43.0"
+ENV INSTALL_PACKAGES="wget gpg libgbm1 procps"
+ENV KEEP_APP_RUNNING="1"
 
 # Signal installation, based on steps from https://signal.org/es/download/# (Download for Linux)
 RUN \
@@ -33,3 +36,4 @@ RUN chmod +x /startapp.sh
 
 # Set the name of the application.
 RUN set-cont-env APP_NAME "Signal Messenger"
+RUN set-cont-env APP_VERSION="v7.43.0"
