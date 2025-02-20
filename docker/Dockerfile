@@ -36,4 +36,4 @@ RUN chmod +x /startapp.sh
 
 # Set the name of the application.
 RUN set-cont-env APP_NAME "Signal Messenger"
-RUN set-cont-env APP_VERSION="v7.43.0"
+RUN set-cont-env APP_VERSION "v7.43.0"
