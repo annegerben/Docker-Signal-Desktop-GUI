@@ -51,7 +51,7 @@ The available build args are:
   - Initial version: functional app
 
 ## Signal version
-- Release v7.44.0
+- Release v7.45.0
   
 ## Credits
 Original creator is https://github.com/David-Lor/Docker-Signal-Desktop-GUI
