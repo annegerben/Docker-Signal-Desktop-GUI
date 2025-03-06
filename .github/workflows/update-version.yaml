@@ -1,9 +1,10 @@
-name: Update Signal.version
+name: Update Signal Version
 on:
   schedule:
     - cron: '0 * * * *' # This will run every hour
+
 jobs:
-  update-readme:
+  update-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -15,11 +16,22 @@ jobs:
           latest_release=$(curl -s https://api.github.com/repos/signalapp/Signal-Desktop/releases/latest | jq -r '.tag_name')
           echo "latest_release=$latest_release" >> $GITHUB_ENV
 
-      - name: Update Signal.version
+      - name: Get current version
+        id: get_current_version
         run: |
-          sed -i 's/signal-version:.*/signal-version: ${{ env.latest_release }}/' Signal.version
+          if [ -f signal.version ]; then
+            current_version=$(cat signal.version)
+          else
+            current_version=""
+          fi
+          echo "current_version=$current_version" >> $GITHUB_ENV
+
+      - name: Update signal.version if version has changed
+        if: env.latest_release != env.current_version
+        run: |
+          echo "${{ env.latest_release }}" > signal.version
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add Signal.version
-          git commit -m "Update Signal.version with latest Signal-Desktop version"
+          git add signal.version
+          git commit -m "Update signal.version with latest Signal-Desktop version ${{ env.latest_release }}"
           git push
