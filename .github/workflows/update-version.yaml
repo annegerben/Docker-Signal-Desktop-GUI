@@ -1,7 +1,7 @@
 name: Update Signal Version
 on:
   schedule:
-    - cron: '0 * * * *' # This will run every hour
+    - cron: '15 */8 * * *' # This will run every hour
 
 jobs:
   update-version:
