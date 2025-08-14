@@ -1,4 +1,4 @@
-ARG IMAGE_TAG="debian-11-v4"
+ARG IMAGE_TAG="debian-12-v4"
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
 
