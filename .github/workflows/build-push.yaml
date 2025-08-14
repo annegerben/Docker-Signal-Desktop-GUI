@@ -37,7 +37,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            yourdockeruser/signal-desktop:latest
-            yourdockeruser/signal-desktop:${{ github.sha }}
+            ${{ secrets.DOCKER_USER }}/signal-desktop:latest
+            ${{ secrets.DOCKER_USER }}/signal-desktop:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
