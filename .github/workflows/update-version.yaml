@@ -1,37 +1,35 @@
 name: Update Signal Version
+
 on:
   schedule:
-    - cron: '15 */8 * * *' # This will run every hour
+    - cron: '15 6 * * *'
+  workflow_dispatch:
 
 jobs:
   update-version:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Fetch latest version
-        id: fetch_version
+      - name: Fetch latest Signal Desktop version
         run: |
-          latest_release=$(curl -s https://api.github.com/repos/signalapp/Signal-Desktop/releases/latest | jq -r '.tag_name')
-          echo "latest_release=$latest_release" >> $GITHUB_ENV
+          curl -s https://api.github.com/repos/signalapp/Signal-Desktop/releases/latest \
+          | jq -r '.tag_name' > latest.version
 
-      - name: Get current version
-        id: get_current_version
+      - name: Compare with current version
         run: |
-          if [ -f signal.version ]; then
-            current_version=$(cat signal.version)
-          else
-            current_version=""
+          if ! cmp -s latest.version signal.version; then
+            mv latest.version signal.version
+            echo "VERSION_UPDATED=true" >> $GITHUB_ENV
           fi
-          echo "current_version=$current_version" >> $GITHUB_ENV
 
-      - name: Update signal.version if version has changed
-        if: env.latest_release != env.current_version
+      - name: Commit updated version
+        if: env.VERSION_UPDATED == 'true'
         run: |
-          echo "${{ env.latest_release }}" > signal.version
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git add signal.version
-          git commit -m "Update signal.version with latest Signal-Desktop version ${{ env.latest_release }}"
+          git commit -m "Update Signal version"
           git push
