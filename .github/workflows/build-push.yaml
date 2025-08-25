@@ -6,8 +6,10 @@ on:
     tags: ['v*']
     paths:
       - 'signal.version'
+  workflow_dispatch:
   pull_request:
     branches: [main]
+
 
 jobs:
   build:
