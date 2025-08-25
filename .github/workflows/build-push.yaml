@@ -2,8 +2,12 @@ name: Build and Push Docker Image
 
 on:
   push:
+    branches: [main, develop]
+    tags: ['v*']
     paths:
       - 'signal.version'
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
