@@ -1,7 +1,8 @@
 services:
   signal-desktop-gui:
-    image: annegerben/signal-desktop-gui:dev
+    image: annegerben/signal-desktop:latest
     container_name: signal-desktop
+    shm_size: 2g
     volumes:
       - /data/signal:/config
     ports:
