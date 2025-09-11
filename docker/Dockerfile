@@ -4,6 +4,8 @@ ENV APP_NAME="Signal Messenger"
 
 # Signal installation, based on steps from https://signal.org/es/download/# (Download for Linux)
 RUN \
+    # update packages
+    apt-get update && apt-get upgrade -y && apt-get clean
     # Dependencies for installation and for signal itself
     apt-get -yq update && apt-get -yq install wget gpg libgbm1 procps && \
     # 1. Install our official public software signing key
