@@ -37,6 +37,10 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      - name: Read version from file
+        id: get_version
+        run: echo "VERSION=$(cat signal.version)" >> $GITHUB_ENV
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -45,6 +49,15 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USER }}/signal-desktop:latest
-            ${{ secrets.DOCKER_USER }}/signal-desktop:${{ github.sha }}
+            ${{ secrets.DOCKER_USER }}/signal-desktop:${{ env.VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Create Git tag from version
+        if: github.event_name == 'push'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git fetch --tags
+          git tag -a "v${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
