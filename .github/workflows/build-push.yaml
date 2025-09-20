@@ -55,9 +55,11 @@ jobs:
 
       - name: Create Git tag from version
         if: github.event_name == 'push'
+        env:
+          PAT: ${{ secrets.ACTIONS_PAT }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git fetch --tags
           git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-          git push origin "${{ env.VERSION }}"
+          git push https://x-access-token:${PAT}@github.com/${{ github.repository }} "${{ env.VERSION }}"
