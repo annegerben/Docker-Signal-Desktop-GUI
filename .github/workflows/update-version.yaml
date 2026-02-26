@@ -36,11 +36,15 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and Push changes
+- name: Commit and Push changes
         if: steps.update_file.outputs.changed == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add signal.version
           git commit -m "chore: update signal version to ${{ steps.get_version.outputs.latest_version }}"
+          
+          # Haal eerst de laatste wijzigingen op om conflicten te voorkomen
+          git pull --rebase origin develop
+          
           git push origin develop
