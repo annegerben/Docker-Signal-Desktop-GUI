@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.SIGNAL }} # Gebruik je Fine-grained PAT
+          token: ${{ secrets.signal }} # Gebruik je Fine-grained PAT
           ref: develop
           persist-credentials: true
 
