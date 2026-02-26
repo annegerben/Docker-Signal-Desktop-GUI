@@ -2,34 +2,45 @@ name: Update Signal Version
 
 on:
   schedule:
-    - cron: '15 6 * * *'
-  workflow_dispatch:
+    - cron: '15 6 * * *' # Elke dag om middernacht
+  workflow_dispatch: # Handmatig starten mogelijk
 
 jobs:
-  update-version:
+  check-version:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SIGNAL }} # Gebruik je Fine-grained PAT
+          ref: develop
+          persist-credentials: true
 
-      - name: Fetch latest Signal Desktop version
+      - name: Get latest Signal version
+        id: get_version
         run: |
-          curl -s https://api.github.com/repos/signalapp/Signal-Desktop/releases/latest \
-          | jq -r '.tag_name' > latest.version
+          # Haal de nieuwste versie op uit de officiële Signal APT repo
+          LATEST_VERSION=$(curl -s https://updates.signal.org/desktop/apt/dists/xenial/main/binary-amd64/Packages | grep -A 5 "Package: signal-desktop" | grep "Version:" | awk '{print $2}' | head -n 1)
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Compare with current version
+      - name: Update signal.version file
+        id: update_file
         run: |
-          if ! cmp -s latest.version signal.version; then
-            mv latest.version signal.version
-            echo "VERSION_UPDATED=true" >> $GITHUB_ENV
+          CURRENT_VERSION=$(cat signal.version)
+          LATEST_VERSION="${{ steps.get_version.outputs.latest_version }}"
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "$LATEST_VERSION" > signal.version
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit updated version
-        if: env.VERSION_UPDATED == 'true'
+      - name: Commit and Push changes
+        if: steps.update_file.outputs.changed == 'true'
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add signal.version
-          git commit -m "Update Signal version"
-          git push
+          git commit -m "chore: update signal version to ${{ steps.get_version.outputs.latest_version }}"
+          git push origin develop
