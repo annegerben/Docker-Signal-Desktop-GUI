@@ -1,29 +1,22 @@
-name: Build and Push Docker Image
+name: Docker Build and Push
 
 on:
   push:
-    branches: [develop, main]
-    tags: ['v*']
+    branches:
+      - develop
     paths:
-      - 'signal.version'
-
-  pull_request:
-    branches: [develop, main]
-    paths:
-      - 'signal.version'
-
+      - 'signal.version' # Triggert alleen als de versie is aangepast
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [linux/amd64]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SIGNAL }} # Consistent gebruik van je PAT
+          ref: develop
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -31,35 +24,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to DockerHub
+      - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Read version from file
-        id: get_version
-        run: echo "VERSION=$(cat signal.version)" >> $GITHUB_ENV
-
-      - name: Build and push
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
-          context: ./docker
-          platforms: ${{ matrix.platform }}
+          context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USER }}/signal-desktop:latest
-            ${{ secrets.DOCKER_USER }}/signal-desktop:${{ env.VERSION }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            annegerben/signal-desktop-gui:latest
+            annegerben/signal-desktop-gui:${{ steps.get_version_tag.outputs.version }}
+        # We moeten de versie even inlezen voor de tag
+        id: build_step
 
-      - name: Create Git tag from version
-        if: github.event_name == 'push'
-        env:
-          PAT: ${{ secrets.ACTIONS_PAT }}
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git fetch --tags
-          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-          git push https://x-access-token:${PAT}@github.com/${{ github.repository }} "${{ env.VERSION }}"
+      # Extra stap om de versie uit het bestand te halen voor de Docker tag
+      - name: Get version for tag
+        id: get_version_tag
+        run: echo "version=$(cat signal.version)" >> $GITHUB_OUTPUT
