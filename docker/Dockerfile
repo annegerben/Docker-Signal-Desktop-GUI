@@ -2,10 +2,9 @@ ARG IMAGE_TAG="debian-12-v4"
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
 
-# Gebruik UID 0 (root) in plaats van de tekst "root" om Buildx-bugs te voorkomen
-USER 0
+# TIP: Geen USER-instructies hier, dat lossen we op in de RUN-commando's om Buildx-bugs te omzeilen.
 
-# Stap 1: Installeer de basisbenodigdheden (loopt nu gegarandeerd als root)
+# Stap 1: Installeer de basisbenodigdheden
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
     gpg \
@@ -24,7 +23,8 @@ RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.g
 RUN apt-get update
 
 # Stap 5: Installeer Signal Desktop
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y signal-desktop
+# We voegen '-o APT::Sandbox::User=root' toe om te voorkomen dat apt naar een '_apt' gebruiker zoekt (wat Buildx laat crashen)
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop
 
 # Stap 6: Ruim de build-tools netjes op
 RUN apt-get purge -y --auto-remove wget gpg && rm -rf /var/lib/apt/lists/*
