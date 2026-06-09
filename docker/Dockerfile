@@ -2,10 +2,10 @@ ARG IMAGE_TAG="debian-12-v4"
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
 
-# HEEL BELANGRIJK: Schakel expliciet naar root voor de installatie
-USER root
+# Gebruik UID 0 (root) in plaats van de tekst "root" om Buildx-bugs te voorkomen
+USER 0
 
-# Stap 1: Installeer de basisbenodigdheden
+# Stap 1: Installeer de basisbenodigdheden (loopt nu gegarandeerd als root)
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     wget \
     gpg \
@@ -20,10 +20,10 @@ RUN wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor -o 
 # Stap 3: Voeg de Signal repository toe
 RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' > /etc/apt/sources.list.d/signal-xenial.list
 
-# Stap 4: Update de pakketlijst (als dit faalt, is er een repository/netwerkprobleem)
+# Stap 4: Update de pakketlijst
 RUN apt-get update
 
-# Stap 5: Installeer Signal Desktop (zonder --no-install-recommends voor alle GUI-deps)
+# Stap 5: Installeer Signal Desktop
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y signal-desktop
 
 # Stap 6: Ruim de build-tools netjes op
