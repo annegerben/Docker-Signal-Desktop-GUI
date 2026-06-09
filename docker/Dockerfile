@@ -3,22 +3,20 @@ FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
 
 # Signal installation, based on steps from https://signal.org/es/download/# (Download for Linux)
-RUN \
-    # update packages
-    apt-get update && apt-get upgrade -y && apt-get clean && \
-    # Dependencies for installation and for signal itself
-    apt-get -yq update && apt-get -yq install wget gpg libgbm1 procps && \
-    # 1. Install our official public software signing key
-    wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg && \
-    cat signal-desktop-keyring.gpg | tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null && \
-    # 2. Add our repository to your list of repositories
-    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' | tee -a /etc/apt/sources.list.d/signal-xenial.list && \
-    # 3. Update your package database and install signal
-    apt-get -yq update && apt-get -yq install signal-desktop && \
-    # Cleanup
-    apt-get -yq purge wget gpg && apt-get -yq autoremove && \
-    rm -rf /var/lib/apt/lists/*
-
+# Zorg voor een schone en betrouwbare installatie van Signal Desktop
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    wget \
+    gpg \
+    ca-certificates \
+    libgbm1 \
+    procps \
+ && wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor -o /usr/share/keyrings/signal-desktop-keyring.gpg \
+ && echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' > /etc/apt/sources.list.d/signal-xenial.list \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends signal-desktop \
+ && apt-get purge -y --auto-remove wget gpg ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+ 
 # Post-requirements for Signal
 RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox
 
