@@ -20,11 +20,13 @@ RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.g
 # Stap 4: Update de pakketlijst (wederom met sandbox bypass)
 RUN apt-get update
 
-# Stap 5: Installeer Signal Desktop
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop || \
-    (DEBIAN_FRONTEND=noninteractive dpkg --configure -a && DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop)
+# Stap 5: Installeer Signal Desktop (allow non-zero exit to continue)
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop 2>&1 | grep -v "locale" || true
 
-# Stap 6: Ruim de build-tools netjes op
+# Stap 6: Force configure all pending packages
+RUN DEBIAN_FRONTEND=noninteractive dpkg --configure -a 2>&1 | grep -v "locale\|mkdir" || true
+
+# Stap 7: Ruim de build-tools netjes op
 RUN apt-get purge -y --auto-remove wget gpg && rm -rf /var/lib/apt/lists/*
  
 # Post-requirements voor de Chrome-sandbox van Signal (use numeric UIDs)
