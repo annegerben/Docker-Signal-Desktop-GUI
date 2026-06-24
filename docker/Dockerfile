@@ -2,10 +2,8 @@ ARG IMAGE_TAG="debian-12-v4"
 FROM jlesage/baseimage-gui:${IMAGE_TAG}
 ENV APP_NAME="Signal Messenger"
 
-# TIP: Geen USER-instructies hier, dat lossen we op in de RUN-commando's om Buildx-bugs te omzeilen.
-
-# Stap 1: Installeer de basisbenodigdheden
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+# Stap 1: Installeer de basisbenodigdheden met een sandbox-override voor APT
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y --no-install-recommends \
     wget \
     gpg \
     ca-certificates \
@@ -19,11 +17,10 @@ RUN wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor -o 
 # Stap 3: Voeg de Signal repository toe
 RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' > /etc/apt/sources.list.d/signal-xenial.list
 
-# Stap 4: Update de pakketlijst
+# Stap 4: Update de pakketlijst (wederom met sandbox bypass)
 RUN apt-get update
 
 # Stap 5: Installeer Signal Desktop
-# We voegen '-o APT::Sandbox::User=root' toe om te voorkomen dat apt naar een '_apt' gebruiker zoekt (wat Buildx laat crashen)
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop
 
 # Stap 6: Ruim de build-tools netjes op
