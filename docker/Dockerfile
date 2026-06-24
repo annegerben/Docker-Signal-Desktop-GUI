@@ -32,7 +32,7 @@ RUN [ -f /opt/Signal/chrome-sandbox ] && chown 0:0 /opt/Signal/chrome-sandbox &&
 
 # Download en installeer het applicatie-icoon (with error handling)
 RUN \
-    APP_ICON_URL=https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Signal_ultramarine_icon.svg/600px-Signal_ultramarine_icon.svg.png && \
+    APP_ICON_URL=https://signal.org/brand/assets/logo_min_size.png && \
     install_app_icon.sh "$APP_ICON_URL" || echo "Warning: Failed to download app icon, continuing anyway..."
     
 # Volumes definitie
