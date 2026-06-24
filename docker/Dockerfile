@@ -27,8 +27,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -o
 # Stap 6: Ruim de build-tools netjes op
 RUN apt-get purge -y --auto-remove wget gpg && rm -rf /var/lib/apt/lists/*
  
-# Post-requirements voor de Chrome-sandbox van Signal
-RUN chown root:root /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox
+# Post-requirements voor de Chrome-sandbox van Signal (use numeric UIDs)
+RUN [ -f /opt/Signal/chrome-sandbox ] && chown 0:0 /opt/Signal/chrome-sandbox && chmod 4755 /opt/Signal/chrome-sandbox || true
 
 # Download en installeer het applicatie-icoon
 RUN \
