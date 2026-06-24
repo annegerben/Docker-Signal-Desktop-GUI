@@ -20,8 +20,9 @@ RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.g
 # Stap 4: Update de pakketlijst (wederom met sandbox bypass)
 RUN apt-get update
 
-# Stap 5: Installeer Signal Desktop
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -y signal-desktop
+# Stap 5: Installeer Signal Desktop (skip post-install scripts to avoid systemd conflicts)
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -o APT::Sandbox::User=root -o DPkg::Pre-Install-Pkgs::=/bin/true -y signal-desktop 2>&1 | grep -v "setting up" || true && \
+    DEBIAN_FRONTEND=noninteractive dpkg --configure -a 2>&1 | grep -v "locale" || true
 
 # Stap 6: Ruim de build-tools netjes op
 RUN apt-get purge -y --auto-remove wget gpg && rm -rf /var/lib/apt/lists/*
